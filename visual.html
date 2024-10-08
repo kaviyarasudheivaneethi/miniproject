@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <title>Interactive Visualization Dashboard</title>
+</head>
+<body>
+
+    <h2 style="text-align: center;">Graphical Representation For Company Profit</h2>
+
+    <div style="text-align: center; margin-bottom: 20px;">
+        <!-- Dropdown to filter products -->
+        <label for="product-select">Choose a Product:</label>
+        <select id="product-select">
+            <option value="all">All Products</option>
+            <option value="Organic Millet">Organic Millet</option>
+            <option value="Pearl Millet">Pearl Millet</option>
+            <option value="Foxtail Millet">Foxtail Millet</option>
+            <option value="Finger Millet">Finger Millet</option>
+            <option value="Barnyard Millet">Barnyard Millet</option>
+            <option value="Kodo Millet">Kodo Millet</option>
+            <option value="Little Millet">Little Millet</option>
+            <option value="Proso Millet">Proso Millet</option>
+            <option value="Amaranth">Amaranth</option>
+            <option value="Quinoa">Quinoa</option>
+        </select>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap;">
+        <!-- Revenue Over Time -->
+        <div id="revenue_time" style="width: 45%; height: 400px; margin: 20px;"></div>
+
+        <!-- Units Sold by Product -->
+        <div id="units_sold" style="width: 45%; height: 400px; margin: 20px;"></div>
+
+        <!-- Revenue Distribution by Payment Method -->
+        <div id="revenue_payment" style="width: 45%; height: 400px; margin: 20px;"></div>
+
+        <!-- Revenue vs Units Sold -->
+        <div id="revenue_vs_units" style="width: 45%; height: 400px; margin: 20px;"></div>
+    </div>
+    <nav>
+        <ul>
+            <button style="        background-color: #fff;
+            border: 1px solid #ddd;
+            width: 250px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #28a7467c;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            display: flex; ">
+            <li><a href="index.html"> Back To The Home Page</a></li>
+            </button>
+        </ul>
+    </nav>
+
+    <script>
+        // Initial data for the plots
+        const data = {
+            dates: ['2024-01-01', '2024-01-02', '2024-01-03', '2024-01-04', '2024-01-05', '2024-01-06', '2024-01-07', '2024-01-08', '2024-01-09', '2024-01-10'],
+            products: ['Organic Millet', 'Pearl Millet', 'Foxtail Millet', 'Finger Millet', 'Barnyard Millet', 'Kodo Millet', 'Little Millet', 'Proso Millet', 'Amaranth', 'Quinoa'],
+            unitsSold: [150, 200, 180, 220, 170, 190, 160, 210, 140, 130],
+            revenue: [4500, 6000, 5400, 6600, 5100, 5700, 4800, 6300, 5600, 5200],
+            paymentMethods: ['Credit Card', 'PayPal', 'Credit Card', 'Bank Transfer', 'Credit Card', 'PayPal', 'Credit Card', 'Bank Transfer', 'Credit Card', 'PayPal'],
+            paymentRevenue: [17400, 17000, 17400, 10800],
+            paymentLabels: ['Credit Card', 'PayPal', 'Bank Transfer'],
+        };
+
+        // Filter data by product
+        function filterByProduct(product) {
+            if (product === 'all') return data.unitsSold.map((_, index) => index);
+
+            return data.products.map((p, index) => p === product ? index : -1).filter(index => index !== -1);
+        }
+
+        // Plot the Revenue Over Time chart
+        function plotRevenueTime(indices) {
+            const filteredDates = indices.map(i => data.dates[i]);
+            const filteredRevenue = indices.map(i => data.revenue[i]);
+
+            const revenueTimeTrace = {
+                x: filteredDates,
+                y: filteredRevenue,
+                mode: 'lines+markers',
+                type: 'scatter',
+                name: 'Revenue',
+                marker: { color: 'blue' },
+                hoverinfo: 'x+y',
+                hoverlabel: { bgcolor: "#E8EAF6" }
+            };
+
+            const revenueTimeLayout = {
+                title: 'Revenue Over Time',
+                xaxis: { title: 'Date' },
+                yaxis: { title: 'Revenue ($)' },
+                hovermode: 'x unified',
+                dragmode: 'pan',
+            };
+
+            Plotly.newPlot('revenue_time', [revenueTimeTrace], revenueTimeLayout);
+        }
+
+        // Plot Units Sold by Product
+        function plotUnitsSold(indices) {
+            const filteredProducts = indices.map(i => data.products[i]);
+            const filteredUnitsSold = indices.map(i => data.unitsSold[i]);
+
+            const unitsSoldTrace = {
+                x: filteredProducts,
+                y: filteredUnitsSold,
+                type: 'bar',
+                marker: { color: 'rgba(0, 150, 136, 0.6)' },
+                hoverinfo: 'x+y',
+                hoverlabel: { bgcolor: "#D1C4E9" }
+            };
+
+            const unitsSoldLayout = {
+                title: 'Units Sold by Product',
+                xaxis: { title: 'Product', tickangle: -45 },
+                yaxis: { title: 'Units Sold' }
+            };
+
+            Plotly.newPlot('units_sold', [unitsSoldTrace], unitsSoldLayout);
+        }
+
+        // Plot Revenue Distribution by Payment Method
+        function plotRevenueByPayment() {
+            const paymentMethodTrace = {
+                values: data.paymentRevenue,
+                labels: data.paymentLabels,
+                type: 'pie',
+                marker: { colors: ['#FFDDC1', '#FCB1A1', '#D6D6D6'] },
+                hoverinfo: 'label+percent+value',
+                hoverlabel: { bgcolor: "#FFEBEE" }
+            };
+
+            const paymentMethodLayout = {
+                title: 'Revenue Distribution by Payment Method',
+                showlegend: true
+            };
+
+            Plotly.newPlot('revenue_payment', [paymentMethodTrace], paymentMethodLayout);
+        }
+
+        // Plot Revenue vs Units Sold
+        function plotRevenueVsUnits(indices) {
+            const filteredUnitsSold = indices.map(i => data.unitsSold[i]);
+            const filteredRevenue = indices.map(i => data.revenue[i]);
+
+            const revenueVsUnitsTrace = {
+                x: filteredUnitsSold,
+                y: filteredRevenue,
+                mode: 'markers',
+                type: 'scatter',
+                marker: { color: 'rgba(55,128,191,0.7)', size: 12 },
+                hoverinfo: 'x+y',
+                hoverlabel: { bgcolor: "#E8EAF6" }
+            };
+
+            const revenueVsUnitsLayout = {
+                title: 'Revenue vs Units Sold',
+                xaxis: { title: 'Units Sold' },
+                yaxis: { title: 'Revenue ($)' },
+                hovermode: 'closest',
+                dragmode: 'zoom',
+            };
+
+            Plotly.newPlot('revenue_vs_units', [revenueVsUnitsTrace], revenueVsUnitsLayout);
+        }
+
+        // Initial rendering
+        const indices = data.unitsSold.map((_, i) => i);
+        plotRevenueTime(indices);
+        plotUnitsSold(indices);
+        plotRevenueByPayment();
+        plotRevenueVsUnits(indices);
+
+        // Update charts when product selection changes
+        document.getElementById('product-select').addEventListener('change', function() {
+            const selectedProduct = this.value;
+            const filteredIndices = filterByProduct(selectedProduct);
+            plotRevenueTime(filteredIndices);
+            plotUnitsSold(filteredIndices);
+            plotRevenueVsUnits(filteredIndices);
+        });
+    </script>
+</body>
+</html>

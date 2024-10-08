@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link rel="stylesheet" href="product.css">
+</head>
+<body>
+    <h1>Explore the products</h1>
+
+    <!-- Search bar -->
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search for products...">
+        <button onclick="searchProducts()">Search</button>
+    </div>
+
+    <!-- Product List -->
+    <div class="product-container" id="productContainer">
+        <div class="product" data-id="1">
+            <img src="imgg/FingerMillet.webp" alt="Finger Millet">
+            <h3>Finger Millet</h3>
+            <p>$19</p>
+            <button class="add-to-cart">Add to Cart</button>
+            <button class="buy-now">Buy Now</button>
+        </div>
+        <div class="product" data-id="2">
+            <img src="imgg/foxtail_millet_1200x1200.webp" alt="Foxtail Millet">
+            <h3>Foxtail Millet</h3>
+            <p>$20</p>
+            <button class="add-to-cart">Add to Cart</button>
+            <button class="buy-now">Buy Now</button>
+        </div>
+        <div class="product" data-id="3">
+            <img src="imgg/little millet.webp" alt="Little Millet">
+            <h3>Little Millet</h3>
+            <p>$39</p>
+            <button class="add-to-cart">Add to Cart</button>
+            <button class="buy-now">Buy Now</button>
+        </div>
+        <div class="product" data-id="4">
+            <img src="imgg/media_c0de576e-7d48-4350-8e5f-5a0f37cdf520_2048x.webp" alt="Product 4">
+            <h3>Barnyard millet</h3>
+            <p>$49</p>
+            <button class="add-to-cart">Add to Cart</button>
+            <button class="buy-now">Buy Now</button>
+        </div>
+        <div class="product" data-id="5">
+            <img src="imgg/natural-pearl-millet-250x250.webp" alt="Pearl Millet">
+            <h3>Pearl Millet</h3>
+            <p>$59</p>
+            <button class="add-to-cart">Add to Cart</button>
+            <button class="buy-now">Buy Now</button>
+        </div>
+        <div class="product" data-id="6">
+            <img src="imgg/organic-finger-millet-500x500.webp" alt="Organic Finger Millet">
+            <h3>Organic Finger Millet</h3>
+            <p>$99</p>
+            <button class="add-to-cart">Add to Cart</button>
+            <button class="buy-now">Buy Now</button>
+        </div>
+        <div class="product" data-id="7">
+            <img src="imgg/sorgummillet.webp" alt="Sorghum Millet">
+            <h3>Sorghum Millet</h3>
+            <p>$60</p>
+            <button class="add-to-cart">Add to Cart</button>
+            <button class="buy-now">Buy Now</button>
+        </div>
+        <div class="product" data-id="8">
+            <img src="imgg/WhatsApp_Image_2023-07-12_at_6_00_10_PM-transformed_b9047311-075a-48fb-8a95-24f3766aad17.webp" alt="Product 9">
+            <h3>Product 9</h3>
+            <p>$85</p>
+            <button class="add-to-cart">Add to Cart</button>
+            <button class="buy-now">Buy Now</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample product data
+        const products = [
+            { id: 1, name: 'Finger Millet', price: 19 },
+            { id: 2, name: 'Foxtail Millet', price: 20 },
+            { id: 3, name: 'Little Millet', price: 39 },
+            { id: 4, name: 'Product 4', price: 49 },
+            { id: 5, name: 'Pearl Millet', price: 59 },
+            { id: 6, name: 'Organic Finger Millet', price: 99 },
+            { id: 7, name: 'Sorghum Millet', price: 60 },
+            { id: 8, name: 'Product 9', price: 85 }
+        ];
+
+        // Function to add a product to the cart
+        function addToCart(productId) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const product = products.find(p => p.id === productId);
+            const existingProduct = cart.find(item => item.id === productId);
+
+            if (existingProduct) {
+                existingProduct.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert(`${product.name} has been added to your cart.`);
+        }
+
+        // Function to handle "Buy Now"
+        function buyNow(productId) {
+            const product = products.find(p => p.id === productId);
+            localStorage.setItem('selectedProduct', JSON.stringify(product));
+            window.location.href = 'order.html'; // Redirect to the order page
+        }
+
+        // Attach event listeners to all "Add to Cart" and "Buy Now" buttons
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = parseInt(this.closest('.product').getAttribute('data-id'));
+                addToCart(productId);
+            });
+        });
+
+        document.querySelectorAll('.buy-now').forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = parseInt(this.closest('.product').getAttribute('data-id'));
+                buyNow(productId);
+            });
+        });
+
+        // Search function to filter products by name
+        function searchProducts() {
+            const input = document.getElementById('searchInput').value.toUpperCase();
+            const products = document.querySelectorAll('.product');
+
+            products.forEach(function(product) {
+                const name = product.querySelector('h3').innerText.toUpperCase();
+                product.style.display = name.includes(input) ? '' : 'none';
+            });
+        }
+    </script>
+    
+</body>
+</html>

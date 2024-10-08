@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordered Products</title>
+    <link rel="stylesheet" href="orproducts.css">
+</head>
+<body>
+
+    <h2>Ordered Products</h2>
+
+    <ul id="orderedProductsList"></ul> <!-- List to display the ordered products -->
+
+    <br>
+    <a href="index.html">Go back to Order Form</a> <!-- Link to go back to the order form page -->
+
+    <script>
+        // Function to display ordered products
+        function displayOrderedProducts() {
+            const orderedProductsList = document.getElementById('orderedProductsList');
+            const orderedProducts = JSON.parse(localStorage.getItem('orderedProducts')) || [];
+
+            // Clear the list before adding new elements
+            orderedProductsList.innerHTML = '';
+
+            if (orderedProducts.length === 0) {
+                const noOrdersMessage = document.createElement('li');
+                noOrdersMessage.textContent = 'No orders found.';
+                orderedProductsList.appendChild(noOrdersMessage);
+            } else {
+                // Add each ordered product to the list
+                orderedProducts.forEach((order, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = `Order ${index + 1}: ${order.product.name} - $${order.product.price}, 
+                                      Name: ${order.customerName}, Address: ${order.customerAddress}, Email: ${order.customerEmail}`;
+                    orderedProductsList.appendChild(li);
+                });
+            }
+        }
+
+        // Display ordered products on page load
+        displayOrderedProducts();
+    </script>
+</body>
+</html>

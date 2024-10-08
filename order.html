@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Form</title>
+    <link rel="stylesheet" href="order.css">
+</head>
+<body>
+
+    <div id="orderDetails">
+        <h2>Product: <span id="productName"></span></h2>
+        <p>Price: $<span id="productPrice"></span></p>
+    </div>
+
+    <form id="orderForm">
+        <label for="customerName">Name:</label>
+        <input type="text" id="customerName" name="customerName" required><br><br>
+
+        <label for="customerAddress">Address:</label>
+        <textarea id="customerAddress" name="customerAddress" required></textarea><br><br>
+
+        <label for="customerEmail">Email:</label>
+        <input type="email" id="customerEmail" name="customerEmail" required><br><br>
+
+        <button type="submit">Submit Order</button>
+    </form>
+
+    <script>
+        // Retrieve the selected product from localStorage
+        const selectedProduct = JSON.parse(localStorage.getItem('selectedProduct'));
+
+        if (selectedProduct) {
+            document.getElementById('productName').textContent = selectedProduct.name;
+            document.getElementById('productPrice').textContent = selectedProduct.price;
+        }
+
+        // Handle form submission
+        document.getElementById('orderForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const customerName = document.getElementById('customerName').value;
+            const customerAddress = document.getElementById('customerAddress').value;
+            const customerEmail = document.getElementById('customerEmail').value;
+
+            // Capture order details
+            const orderDetails = {
+                product: selectedProduct,
+                customerName: customerName,
+                customerAddress: customerAddress,
+                customerEmail: customerEmail
+            };
+
+            console.log('Order Details:', orderDetails);
+            alert('Thank you for your order!');
+            
+            // Clear the local storage
+            localStorage.removeItem('selectedProduct');
+        });
+    </script>
+</body>
+</html>
